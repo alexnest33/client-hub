@@ -4,9 +4,9 @@ import axios from "axios";
 const initialState = {
   applications: [],
   pagination: {
-    page: 1, 
-    limit: 10, 
-    total: 0, 
+    page: 1,
+    limit: 10,
+    total: 0,
     pages: 0,
   },
   selectedApplication: null,
@@ -15,13 +15,16 @@ const initialState = {
 
 export const getAllLeads = createAsyncThunk(
   "get/allLeads",
-  async ({ page = 1, limit = 10, startDate, endDate } = {}, thunkAPI) => {
+  async (
+    { page = 1, limit = 10, startDate, endDate, status } = {},
+    thunkAPI
+  ) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
         `https://leadflow-9v3y.onrender.com/api/admin/applications`,
         {
-          params: { page, limit, startDate, endDate }, 
+          params: { page, limit, startDate, endDate, status },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -43,7 +46,7 @@ export const getApplicationById = createAsyncThunk(
         `https://leadflow-9v3y.onrender.com/api/admin/applications/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      return response.data; 
+      return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
