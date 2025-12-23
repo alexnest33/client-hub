@@ -5,3 +5,24 @@
   text-align: center;
 }
 
+/* контейнер списка */
+.country-list {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* каждый элемент страны */
+.country {
+  display: flex !important;
+  flex-direction: row !important; /* флаг слева, название справа */
+  align-items: center !important; /* вертикальное выравнивание */
+  padding: 5px 10px !important;
+  cursor: pointer;
+}
+
+/* при ховере */
+.country:hover {
+  background-color: #f0f0f0 !important;
+}
