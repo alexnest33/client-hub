@@ -4,22 +4,24 @@ import axios from "axios";
 const initialState = {
   applications: [],
   pagination: {
-    page: 1, // первая страница
-    limit: 10, // количество записей на странице
-    total: 0, // пока ничего нет
+    page: 1, 
+    limit: 10, 
+    total: 0, 
     pages: 0,
   },
   selectedApplication: null,
+  stats: null,
 };
 
 export const getAllLeads = createAsyncThunk(
   "get/allLeads",
-  async ({ page, limit }, thunkAPI) => {
+  async ({ page = 1, limit = 10, startDate, endDate } = {}, thunkAPI) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `https://leadflow-9v3y.onrender.com/api/admin/applications?page=${page}&limit=${limit}`,
+        `https://leadflow-9v3y.onrender.com/api/admin/applications`,
         {
+          params: { page, limit, startDate, endDate }, 
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -41,7 +43,7 @@ export const getApplicationById = createAsyncThunk(
         `https://leadflow-9v3y.onrender.com/api/admin/applications/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      return response.data; // вернём объект заявки
+      return response.data; 
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -73,6 +75,27 @@ export const updateApplicationStatus = createAsyncThunk(
   }
 );
 
+export const getStats = createAsyncThunk(
+  "admin/getStats",
+  async ({ startDate, endDate }, thunkAPI) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        "https://leadflow-9v3y.onrender.com/api/admin/stats",
+        {
+          params: { startDate, endDate },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const adminPanelSlice = createSlice({
   name: "applications",
   initialState,
@@ -96,6 +119,9 @@ const adminPanelSlice = createSlice({
       })
       .addCase(getApplicationById.fulfilled, (state, action) => {
         state.selectedApplication = action.payload.data;
+      })
+      .addCase(getStats.fulfilled, (state, action) => {
+        state.stats = action.payload.data;
       });
   },
 });
