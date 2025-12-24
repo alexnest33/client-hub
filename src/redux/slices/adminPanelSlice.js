@@ -11,6 +11,10 @@ const initialState = {
   },
   selectedApplication: null,
   stats: null,
+  statusUpdatingId: null,
+  applicationDetailsLoading: false,
+  statsLoading: false,
+  tableLoading: false, 
 };
 
 export const getAllLeads = createAsyncThunk(
@@ -109,24 +113,82 @@ const adminPanelSlice = createSlice({
         state.applications = action.payload.data.applications;
         state.pagination = action.payload.data.pagination;
       })
-      .addCase(updateApplicationStatus.fulfilled, (state, action) => {
-        const updatedApplication = action.payload.data;
+      // .addCase(updateApplicationStatus.fulfilled, (state, action) => {
+      //   const updatedApplication = action.payload.data;
 
-        const index = state.applications.findIndex(
-          (app) => app.id === updatedApplication.id
-        );
+      //   const index = state.applications.findIndex(
+      //     (app) => app.id === updatedApplication.id
+      //   );
 
-        if (index !== -1) {
-          state.applications[index] = updatedApplication;
-        }
-      })
+      //   if (index !== -1) {
+      //     state.applications[index] = updatedApplication;
+      //   }
+      // })
       .addCase(getApplicationById.fulfilled, (state, action) => {
         state.selectedApplication = action.payload.data;
       })
       .addCase(getStats.fulfilled, (state, action) => {
         state.stats = action.payload.data;
-      });
+      })
+      .addMatcher(
+        action => action.type === updateApplicationStatus.pending.type,
+        (state, action) => {
+          state.statusUpdatingId = action.meta.arg.id;
+        }
+      )
+      .addMatcher(
+        action =>
+          action.type === updateApplicationStatus.fulfilled.type ||
+          action.type === updateApplicationStatus.rejected.type,
+        state => {
+          state.statusUpdatingId = null;
+        }
+      )
+      .addMatcher(
+        action => action.type === getApplicationById.pending.type,
+        state => {
+          state.applicationDetailsLoading = true;
+        }
+      )
+      .addMatcher(
+        action =>
+          action.type === getApplicationById.fulfilled.type ||
+          action.type === getApplicationById.rejected.type,
+        state => {
+          state.applicationDetailsLoading = false;
+        }
+      )
+      .addMatcher(
+        action => action.type === getStats.pending.type,
+        state => {
+          state.statsLoading = true;
+        }
+      )
+      .addMatcher(
+        action =>
+          action.type === getStats.fulfilled.type ||
+          action.type === getStats.rejected.type,
+        state => {
+          state.statsLoading = false;
+        }
+      )
+      .addMatcher(
+        action => action.type === getAllLeads.pending.type,
+        state => {
+          state.tableLoading = true;
+        }
+      )
+      .addMatcher(
+        action =>
+          action.type === getAllLeads.fulfilled.type ||
+          action.type === getAllLeads.rejected.type,
+        state => {
+          state.tableLoading = false;
+        }
+      )
+      
   },
+  
 });
 
 export default adminPanelSlice.reducer;

@@ -89,11 +89,12 @@ const ClientRequest = () => {
                     Оставьте заявку
                 </h2>
 
-                <Form form={form} layout="vertical" onFinish={onFinish}>
+                <Form form={form} layout="vertical" onFinish={onFinish} validateTrigger="onBlur">
                     <Form.Item
                         label="Имя:"
                         name="name"
                         rules={[{ required: true, message: "Введите имя" }, { min: 2 }]}
+                        validateTrigger="onBlur"
                     >
                         <Input placeholder="Иван Иванов" />
                     </Form.Item>
@@ -127,6 +128,7 @@ const ClientRequest = () => {
                                 message: "Некорректный email. Проверьте наличие @",
                             },
                         ]}
+                        validateTrigger="onBlur"
                     >
                         <Input placeholder="ivan@example.com
 " />
