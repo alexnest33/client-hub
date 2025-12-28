@@ -84,7 +84,7 @@ export const updateApplicationStatus = createAsyncThunk(
 
 export const getStats = createAsyncThunk(
   "admin/getStats",
-  async ({ startDate, endDate }, thunkAPI) => {
+  async ({ startDate, endDate } = {}, thunkAPI) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
